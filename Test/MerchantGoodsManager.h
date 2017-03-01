@@ -9,6 +9,9 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 #import "MerchantVC.h"
+
+
+#define kGoodsCellRowHeight  88
 @interface MerchantGoodsManager : UITableView <UITableViewDelegate>
 
 - (instancetype)initWithFrame:(CGRect)frame;

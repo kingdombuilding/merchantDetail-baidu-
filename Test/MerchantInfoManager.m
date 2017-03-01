@@ -14,30 +14,16 @@
 
 @implementation MerchantInfoManager
 
+
 - (instancetype)initWithFrame:(CGRect)frame {
-    if (self = [super initWithFrame:frame]) {
-        //        self.contentInset = UIEdgeInsetsMake(100, 0, 0, 0);
+    if (self = [super initWithFrame:frame style:UITableViewStyleGrouped]) {
         self.delegate = self;
         self.dataSource = self;
         [self registerClass:[UITableViewCell class] forCellReuseIdentifier:@"Table"];
-//        [self addObserver:self forKeyPath:@"contentOffset" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:nil];
+        
     }
     return self;
 }
-
-
-
-//- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context {
-//    if ([keyPath isEqualToString:@"contentOffset"]) {
-//        CGPoint newOffset = [change[NSKeyValueChangeNewKey] CGPointValue];
-//        CGPoint oldOffset = [change[NSKeyValueChangeNewKey] CGPointValue];
-//        CGFloat off = newOffset.y - oldOffset.y;
-//        if ( self.superViewController.exechangeOff) {
-//            [self.superViewController changeOff:self off:off];
-//        }
-//    }
-//}
-
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
     [self.superViewController scrollViewDidScroll:scrollView];

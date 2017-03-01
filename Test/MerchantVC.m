@@ -105,8 +105,9 @@ alpha:alphaValue]
     UITableView *_tableView2;
     UITableView *_tableView3;
     
-    CGFloat headerViewY;
 }
+
+#define kCellRowDiff (kGoodsCellRowHeight - 30)
 
 
 
@@ -161,13 +162,7 @@ alpha:alphaValue]
     scrollView.contentSize = CGSizeMake(MainScreenSize_W * 3, MainScreenSize_H - kNavHeight - kVisibleHeight);
     
     
-    
-    //    UIScrollView *scrollView2 = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, MainScreenSize_W * 3, scrollView.height)];
-    //    _scrollView2 = scrollView2;
-    //    scrollView2.backgroundColor = [UIColor lightGrayColor];
-    //    [scrollView addSubview:scrollView2];
-    //    scrollView2.delegate = self;
-    //    scrollView2.contentSize = CGSizeMake(MainScreenSize_W, scrollView2.height + kShopSimpleInfoHeight);
+
     
     
     
@@ -175,24 +170,17 @@ alpha:alphaValue]
     
     UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, MainScreenSize_W - kShopLeftWidth, kShopSimpleInfoHeight)];
     
-    //    UIScrollView *scrollViewCover = [[UIScrollView alloc] initWithFrame:CGRectMake(kShopLeftWidth, 0, MainScreenSize_W - kShopLeftWidth, scrollView.height)];
-    //    _scrollViewCover = scrollViewCover;
-    //    scrollViewCover.delegate = self;
-    //    [scrollView addSubview:scrollViewCover];
-    //    scrollViewCover.contentSize = CGSizeMake(MainScreenSize_W - kShopLeftWidth, scrollViewCover.height + kShopSimpleInfoHeight);
     
     
     UIView *headerView1 = [[UIView alloc] initWithFrame:CGRectMake(0, 0, MainScreenSize_W - kShopLeftWidth, kShopSimpleInfoHeight + 30)];
     
     MerchantGoodsManager *goodsManager = [[MerchantGoodsManager alloc] initWithFrame:CGRectMake(kShopLeftWidth, 0, MainScreenSize_W - kShopLeftWidth, scrollView.height)];
-    //    goodsManager.tableHeaderView = headerView;
     _goodsManager = goodsManager;
     goodsManager.superViewController = self;
     _tableView1 = goodsManager;
     [scrollView addSubview:_tableView1];
-    //    goodsManager.bounces = NO;
     goodsManager.tableHeaderView = headerView1;
-    //    goodsManager.scrollEnabled = NO;
+    
     
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(kShopLeftWidth, 100, goodsManager.width, 30)];
     _label = label;
@@ -244,7 +232,6 @@ alpha:alphaValue]
     headerRect = CGRectMake(0, kNavHeight, MainScreenSize_W, kShopSimpleInfoHeight + kVisibleHeight);
     
     self.tableHeaderView = [[UIView alloc] initWithFrame:headerRect];
-    headerViewY = self.tableHeaderView.y;
     self.tableHeaderView.backgroundColor = [UIColor redColor];
     [self.view addSubview:self.tableHeaderView];
     
@@ -374,21 +361,37 @@ alpha:alphaValue]
         CGPoint po = [_theView convertPoint:point toView:_goodsManager];
         NSIndexPath *inx = [_goodsManager indexPathForRowAtPoint:po];
         
-//         获取三个切换按钮下面Cell的位置，
+        //    获取三个切换按钮下面Cell的位置，
         if (inx) {
             UITableViewCell *cell = [_goodsManager cellForRowAtIndexPath:inx];
-            if (inx.row == 19) {
+            
+            if (inx.row == 0 || inx.row == 19) {
                 CGRect rect = [cell convertRect:cell.bounds toView:self.fatherScroll];
+                if (inx.row == 19) {
+                    if (rect.origin.y > 1) {
+                        rect.origin.y -= 100;
+                    }
+                    if (rect.origin.y <= -kCellRowDiff) {
+                        changeoff = rect.origin.y + kCellRowDiff;
+                    }
+                }
+                if ((rect.origin.y <= -kCellRowDiff && inx.row == 19) || (rect.origin.y >= 20 && inx.row == 0)) {
+                    
+                    
+                    NSIndexPath *leftIndex = [NSIndexPath indexPathForRow:inx.section inSection:0];
+                    self.categoryManager.selectedInx = (int)inx.section;
+                    [self.categoryManager reloadRowsAtIndexPaths:@[leftIndex] withRowAnimation:UITableViewRowAnimationNone];
+                    [self.categoryManager scrollToRowAtIndexPath:leftIndex atScrollPosition:UITableViewScrollPositionTop animated:YES];
+                }
 //                NSLog(@"%@", NSStringFromCGRect(rect));
-                if (rect.origin.y >50) {
-                    rect.origin.y -= 100;
-                }
-                if (rect.origin.y <= -14) {
-                    changeoff = rect.origin.y + 14;
-                }
+                
                 
             }
+            
             self.label.text = [NSString stringWithFormat:@"分类%d", (int)inx.section];
+            
+            
+            
         }
         
         _label.y = tableSubY + changeoff;

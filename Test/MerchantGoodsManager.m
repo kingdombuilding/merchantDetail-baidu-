@@ -25,10 +25,7 @@
         self.dataSource = self;
         self.sectionHeaderHeight = 30;
         [self registerClass:[UITableViewCell class] forCellReuseIdentifier:@"Table"];
-        
-        //        UIPanGestureRecognizer *pan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panGesture:)];
-        //        [self addGestureRecognizer:pan];
-        //        [self addObserver:self forKeyPath:@"contentOffset" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:nil];
+        self.rowHeight = kGoodsCellRowHeight;
         
     }
     return self;
@@ -37,20 +34,6 @@
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {    
     [self.superViewController scrollViewDidScroll:scrollView];
 }
-
-
-
-
-//- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context {
-//    if ([keyPath isEqualToString:@"contentOffset"]) {
-//        CGPoint newOffset = [change[NSKeyValueChangeNewKey] CGPointValue];
-//        CGPoint oldOffset = [change[NSKeyValueChangeNewKey] CGPointValue];
-//        CGFloat off = newOffset.y - oldOffset.y;
-//        if ( self.superViewController.exechangeOff) {
-//            [self.superViewController changeOff:self off:off];
-//        }
-//    }
-//}
 
 
 

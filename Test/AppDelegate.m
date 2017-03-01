@@ -26,10 +26,10 @@
     //    TableViewController *vc = [[TableViewController alloc] init];
     //    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
     
-    //    MyViewController *vc = [[MyViewController alloc] init];
+    MyViewController *vc = [[MyViewController alloc] init];
     
     //    keyWindow.rootViewController = nav;
-    MerchantVC *vc = [[MerchantVC alloc] init];
+    //    MerchantVC *vc = [[MerchantVC alloc] init];
     keyWindow.rootViewController = vc;
     self.window = keyWindow;
     [self.window makeKeyAndVisible];

@@ -7,8 +7,16 @@
 //
 
 #import "MyViewController.h"
+#import "MyScrollView.h"
+#import "MyTableView.h"
 
-@interface MyViewController ()
+@interface MyViewController () <UIScrollViewDelegate, UITableViewDelegate>
+
+@property (nonatomic, strong) UIView *myView;
+
+@property (nonatomic, strong) UIScrollView *scrollView;
+
+@property (nonatomic, strong) UIScrollView *tableView;
 
 @end
 
@@ -16,24 +24,48 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    UITableView *scrollView = [[UITableView alloc] initWithFrame:CGRectMake(0, 64, 375 * 0.5, 667 - 64)];
-    scrollView.contentSize = CGSizeMake(375 * 0.5, 1000);
+    
+    MyScrollView *scrollView = [[MyScrollView alloc] initWithFrame:CGRectMake(10, 64, 355, 603)];
+    _scrollView = scrollView;
+    scrollView.delegate = self;
+    scrollView.backgroundColor = [UIColor redColor];
     [self.view addSubview:scrollView];
+    scrollView.contentSize = CGSizeMake(scrollView.frame.size.width, 1000);
+    scrollView.bounces = YES;
     
-    scrollView.backgroundColor = [UIColor darkGrayColor];
-    scrollView.contentInset = UIEdgeInsetsMake(100, 0, 0, 0);
-    
-    UITableView *scrollView2 = [[UITableView alloc] initWithFrame:CGRectMake(375 * 0.5, 64, 375 * 0.5, 667 - 64)];
-    scrollView2.contentSize = CGSizeMake(375 * 0.5, 1000);
-    [self.view addSubview:scrollView2];
-    
-    scrollView2.backgroundColor = [UIColor lightGrayColor];
+    MyTableView *tableView = [[MyTableView alloc] initWithFrame:CGRectMake(0, 100, 355, 503)];
+    _tableView = tableView;
+    tableView.delegate = self;
+    tableView.backgroundColor = [UIColor yellowColor];
+    tableView.scrollEnabled = NO;
+    [scrollView addSubview:tableView];
     
     
+    //    UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 64, 375 * 3, 603)];
+    //    _myView = view;
+    //    view.backgroundColor = [UIColor darkGrayColor];
+    //    [self.view addSubview:view];
     
-    UIPanGestureRecognizer *pan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panGesture)];
     
-    [self.view addGestureRecognizer:pan];
+    //    MyScrollView *scrollView = [[MyScrollView alloc] initWithFrame:CGRectMake(0, 64, 375, 603)];
+    //    scrollView.backgroundColor = [UIColor whiteColor];
+    //    scrollView.pagingEnabled = YES;
+    //    scrollView.contentSize = CGSizeMake(375 * 3, 603);
+    //    [self.view addSubview:scrollView];
+    //
+    //
+    //    MyTableView *table1 = [[MyTableView alloc] initWithFrame:CGRectMake(0, 0, 375, 603)];
+    //    [scrollView addSubview:table1];
+    //
+    //    MyTableView *table2 = [[MyTableView alloc] initWithFrame:CGRectMake(375, 0, 375, 603)];
+    //    [scrollView addSubview:table2];
+    //
+    //    MyTableView *table3 = [[MyTableView alloc] initWithFrame:CGRectMake(375 * 2, 0, 375, 603)];
+    //    [scrollView addSubview:table3];
+    
+    //    UIPanGestureRecognizer *pan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(pangesture:)];
+    //    [view addGestureRecognizer:pan];
+    
 }
 
 - (void)didReceiveMemoryWarning {
@@ -42,9 +74,30 @@
 }
 
 
-- (void)panGesture {
-    NSLog(@"%s", __func__);
+- (void)pangesture:(UIPanGestureRecognizer *)pan {
+    //    NSLog(@"%@", NSStringFromCGPoint([pan translationInView:_myView]));
+    
 }
+
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+    if (scrollView == _scrollView) {
+        
+        if (scrollView.contentOffset.y < 100) {
+            _tableView.frame = CGRectMake(0 , 100, 355, 503 + scrollView.contentOffset.y);
+            _tableView.contentOffset = CGPointMake(_tableView.contentOffset.x, 0);
+        } else {
+            _tableView.frame = CGRectMake(0 , scrollView.contentOffset.y, 355, 603);
+            _tableView.contentOffset = CGPointMake(_tableView.contentOffset.x, scrollView.contentOffset.y - 100);
+        }
+
+        
+        
+    }
+}
+
+
+
 
 
 @end

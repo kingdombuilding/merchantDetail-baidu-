@@ -14,4 +14,6 @@
 
 @property (nonatomic, weak) MerchantVC *superViewController;
 
+@property (nonatomic, assign) int selectedInx;
+
 @end

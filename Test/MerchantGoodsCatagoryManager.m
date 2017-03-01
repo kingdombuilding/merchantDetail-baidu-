@@ -19,6 +19,7 @@
     if (self = [super init]) {
         self.delegate = self;
         self.dataSource = self;
+        self.rowHeight = 60;
         [self registerClass:[UITableViewCell class] forCellReuseIdentifier:@"Table"];
     }
     return self;
@@ -31,7 +32,7 @@
 
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return 20;
+    return 15;
 }
 
 
@@ -39,7 +40,14 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Table" forIndexPath:indexPath];
+    cell.selectionStyle = UITableViewCellSelectionStyleGray;
     cell.textLabel.text = [NSString stringWithFormat:@"分类%d", (int)indexPath.row];
+    
+    if (indexPath.row == _selectedInx) {
+        cell.selected = YES;
+    } else {
+        cell.selected = NO;
+    }
     return cell;
 }
 
