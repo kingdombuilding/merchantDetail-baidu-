@@ -10,7 +10,9 @@
 #import "MyScrollView.h"
 #import "MyTableView.h"
 
-@interface MyViewController () <UIScrollViewDelegate, UITableViewDelegate>
+@interface MyViewController () <UIScrollViewDelegate, UITableViewDelegate> {
+    CGFloat contentOffy;
+}
 
 @property (nonatomic, strong) UIView *myView;
 
@@ -51,7 +53,7 @@
     scrollViewH.backgroundColor = [UIColor darkGrayColor];
     [self.view addSubview:scrollViewH];
     scrollViewH.contentSize = CGSizeMake(375, 603 - 35 + 100);
-    
+    contentOffy = scrollViewH.contentOffset.y;
     
     MyScrollView *scrollViewRow = [[MyScrollView alloc] initWithFrame:CGRectMake(0, 100, 375, scrollViewH.frame.size.height)];
     _scrollViewRow = scrollViewRow;
@@ -171,6 +173,7 @@
     if (scrollView == _scrollViewRow) {
         
     }
+    
 }
 
 //- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
@@ -188,40 +191,99 @@
             _selectTable = _view3;
         }
         
-        _scrollViewH.contentOffset = CGPointMake(_scrollViewH.contentOffset.x, _selectTable.contentOffset.y + 100);
-        _scrollViewRow.frame = CGRectMake(0 , scrollView.contentOffset.y, 375, 603 - 35);
+        //        if (_selectTable.contentOffset.y <= 0) {
+        //            //            _scrollViewH.contentOffset = CGPointMake(_scrollViewH.contentOffset.x, _selectTable.contentOffset.y + 100);
+        //            _scrollViewRow.frame = CGRectMake(0 , 100, 375, 603 - 35);
+        //        } else {
+        //
+        //        }
+        
+        CGRect rect = _btnView.frame;
+        CGFloat off = 0;
+        if (rect.origin.y >= 64) {
+            off = (rect.origin.y - 64);
+        }
+        _scrollViewH.delegate = nil;
+        
+        
+        if (_selectTable.contentOffset.y <= 0) {
+            _scrollViewH.contentOffset = CGPointMake(_scrollViewH.contentOffset.x, 100 - off);
+            
+        } else {
+            _scrollViewH.contentOffset = CGPointMake(_scrollViewH.contentOffset.x, _selectTable.contentOffset.y + 100);
+        }
+        contentOffy = _scrollViewH.contentOffset.y;
+        _scrollViewH.delegate = self;
+        //        NSLog(@"%f", _selectTable.contentOffset.y);
+        //
+        if (_scrollViewH.contentOffset.y <= 100) {
+            _scrollViewRow.frame = CGRectMake(0 , 100, 375, 603 - 35);
+        } else {
+            _scrollViewRow.frame = CGRectMake(0 , _scrollViewH.contentOffset.y + off, 375, 603 - 35);
+        }
+        
+        
+        
     }
 }
 //
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
     
-    
-    
-    
     if (scrollView == _scrollViewH) {
         
-        //        if (scrollView.contentOffset.y >= 100) {
-        //            _view1.scrollEnabled = YES;
-        //        } else {
-        //            _view1.scrollEnabled = NO;
-        //        }
-        CGFloat y = 64 + 100 - scrollView.contentOffset.y;
-        _btnView.frame = CGRectMake(0,  y, 375, 35);
         
-        if (y <= 64) {
-            _btnView.frame = CGRectMake(0,  64, 375, 35);
+        CGFloat off = 0;
+        off = scrollView.contentOffset.y - contentOffy;
+        
+        CGRect rect = _btnView.frame;
+        CGFloat btnoff = 0;
+        if (rect.origin.y >= 64) {
+            btnoff = (rect.origin.y - 64);
         }
+        
+        if (off > 0 ) {
+            //            NSLog(@"%f", self.tableHeaderView.y);
+            rect.origin.y -= off;
+            _btnView.frame = rect;
+            if (_btnView.frame.origin.y <= 64) {
+                rect.origin.y = 64;
+                _btnView.frame = rect;
+            }
+        }
+        // 下滑
+        if (off < 0) {
+            if (scrollView.contentOffset.y <= 100 + 64 -_btnView.frame.origin.y) {
+                rect.origin.y = 100 + 64 - scrollView.contentOffset.y;
+                _btnView.frame = rect;
+            }
+            else {
+                if (_btnView.frame.origin.y != 64) {
+                    rect.origin.y -= off;
+                    _btnView.frame = rect;
+                    if (_btnView.frame.origin.y >= 64 + 100) {
+                        rect.origin.y = 64 + 100;
+                        _btnView.frame = rect;
+                    }
+                }
+            }
+        }
+        
+        
         scrollView.contentSize = CGSizeMake(_selectTable.contentSize.width, _selectTable.contentSize.height + 100);
         
         if (scrollView.contentOffset.y <= 100) {
-            //            _selectTable.frame = CGRectMake(0 , 0, 375, 503 + scrollView.contentOffset.y);
+            
             _selectTable.contentOffset = CGPointMake(_selectTable.contentOffset.x, 0);
             _scrollViewRow.frame = CGRectMake(0 , 100, 375, 603 - 35);
         } else {
+            
             _scrollViewRow.frame = CGRectMake(0 , scrollView.contentOffset.y, 375, 603 - 35);
-            //            _selectTable.frame = CGRectMake(0 , 0, 375,  603 - 35);
             _selectTable.contentOffset = CGPointMake(_selectTable.contentOffset.x, scrollView.contentOffset.y - 100);
         }
+        
+
+        
+        contentOffy = scrollView.contentOffset.y;
     } else if (scrollView == _scrollViewRow) {
         if (scrollView.contentOffset.x < 375) {
             _selectTable = _view1;
@@ -234,32 +296,6 @@
 }
 
 
-
-
-
-
-
-
-//实现scrollView代理
-//- (void)scrollViewWillEndDragging:(UIScrollView *)scrollView withVelocity:(CGPoint)velocity targetContentOffset:(inout CGPoint *)targetContentOffset{
-//    //竖直滑动时 判断是上滑还是下滑
-//    if(velocity.y>0){
-//        //上滑
-//        NSLog(@"上滑");
-//    }else{
-//        //下滑
-//        NSLog(@"下滑");
-//    }
-//
-//    //水平滑动时 判断是右滑还是左滑
-//    if(velocity.x>0){
-//        //右滑
-//        NSLog(@"右滑");
-//    }else{
-//        //左滑
-//        NSLog(@"左滑");
-//    }
-//}
 
 
 
